@@ -1,0 +1,130 @@
+
+tf2_ros::TransformBroadcaster tfBroadcaster;
+tfBroadcaster.sendTransform(aftMappedTrans);
+
+==================================================
+mapOptimization.cpp
+==================================================
+
+geometry_msgs::TransformStamped aftMappedTrans;
+aftMappedTrans.header.frame_id = "camera_init";
+aftMappedTrans.child_frame_id = "aft_mapped";
+
+mapOptimization.cpp: publishTF()
+aftMappedTrans.header.stamp = ros::Time().fromSec(timeLaserOdometry);
+aftMappedTrans.transform.translation.x = transformAftMapped[3];
+aftMappedTrans.transform.translation.y = transformAftMapped[4];
+aftMappedTrans.transform.translation.z = transformAftMapped[5];
+
+aftMappedTrans.transform.rotation.x = -geoQuat.y;
+aftMappedTrans.transform.rotation.y = -geoQuat.z;
+aftMappedTrans.transform.rotation.z = geoQuat.x;
+aftMappedTrans.transform.rotation.w = geoQuat.w;
+
+==================================================
+
+nav_msgs::Odometry odomAftMapped;
+odomAftMapped.header.frame_id = "camera_init";
+odomAftMapped.child_frame_id = "aft_mapped";
+
+pubOdomAftMapped = nh.advertise<nav_msgs::Odometry> ("/aft_mapped_to_init", 5);
+pubOdomAftMapped.publish(odomAftMapped);
+
+==================================================
+featureAssociation.cpp
+==================================================
+ros::Publisher pubLaserCloudCornerLast;
+pubLaserCloudCornerLast = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_corner_last", 2);
+laserCloudCornerLast2.header.frame_id = "camera";
+pubLaserCloudCornerLast.publish(laserCloudCornerLast2);
+
+ros::Publisher pubLaserCloudSurfLast;
+pubLaserCloudSurfLast = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_surf_last", 2);
+laserCloudSurfLast2.header.frame_id = "camera";
+pubLaserCloudSurfLast.publish(laserCloudSurfLast2);
+
+ros::Publisher pubOutlierCloudLast;
+pubOutlierCloudLast = nh.advertise<sensor_msgs::PointCloud2>("/outlier_cloud_last", 2);
+outlierCloudLast2.header.frame_id = "camera";
+pubOutlierCloudLast.publish(outlierCloudLast2);
+
+==================================================
+
+publishOdometry():
+nav_msgs::Odometry laserOdometry;
+laserOdometry.header.frame_id = "camera_init";
+laserOdometry.child_frame_id = "laser_odom";
+
+pubLaserOdometry = nh.advertise<nav_msgs::Odometry> ("/laser_odom_to_init", 5);
+pubLaserOdometry.publish(laserOdometry);
+
+==================================================
+
+publishOdometry():
+tf2_ros::TransformBroadcaster tfBroadcaster;
+
+geometry_msgs::TransformStamped laserOdometryTrans;
+laserOdometryTrans.header.frame_id = "camera_init";
+laserOdometryTrans.child_frame_id = "laser_odom";
+
+laserOdometryTrans.header.stamp = cloudHeader.stamp;
+laserOdometryTrans.transform.translation.x = transformSum[3];
+laserOdometryTrans.transform.translation.y = transformSum[4];
+laserOdometryTrans.transform.translation.z = transformSum[5];
+
+laserOdometryTrans.transform.rotation.x = -geoQuat.y;
+laserOdometryTrans.transform.rotation.y = -geoQuat.z;
+laserOdometryTrans.transform.rotation.z = geoQuat.x;
+laserOdometryTrans.transform.rotation.w = geoQuat.w;
+tfBroadcaster.sendTransform(laserOdometryTrans);
+
+
+==================================================
+transformFusion.cpp
+==================================================
+
+nav_msgs::Odometry laserOdometry2;
+laserOdometry2.header.frame_id = "camera_init";
+laserOdometry2.child_frame_id = "camera";
+
+laserOdometry2.header.stamp = laserOdometry->header.stamp;
+laserOdometry2.pose.pose.orientation.x = -geoQuat.y;
+laserOdometry2.pose.pose.orientation.y = -geoQuat.z;
+laserOdometry2.pose.pose.orientation.z = geoQuat.x;
+laserOdometry2.pose.pose.orientation.w = geoQuat.w;
+laserOdometry2.pose.pose.position.x = transformMapped[3];
+laserOdometry2.pose.pose.position.y = transformMapped[4];
+laserOdometry2.pose.pose.position.z = transformMapped[5];
+
+pubLaserOdometry2 = nh.advertise<nav_msgs::Odometry> ("/integrated_to_init", 5);
+pubLaserOdometry2.publish(laserOdometry2);
+
+==================================================
+
+geometry_msgs::TransformStamped laserOdometryTrans2;
+laserOdometryTrans2.header.frame_id = "camera_init";
+laserOdometryTrans2.child_frame_id = "camera";
+
+laserOdometryTrans2.header.stamp = laserOdometry->header.stamp;
+laserOdometryTrans2.transform.translation.x = transformMapped[3];
+laserOdometryTrans2.transform.translation.y = transformMapped[4];
+laserOdometryTrans2.transform.translation.z = transformMapped[5];
+
+laserOdometryTrans2.transform.rotation.x = -geoQuat.y;
+laserOdometryTrans2.transform.rotation.y = -geoQuat.z;
+laserOdometryTrans2.transform.rotation.z = geoQuat.x;
+laserOdometryTrans2.transform.rotation.w = geoQuat.w;
+tfBroadcaster2.sendTransform(laserOdometryTrans2);
+
+
+==================================================
+geometry_msgs::TransformStamped map_2_camera_init_Trans;
+map_2_camera_init_Trans.header.frame_id = "map";
+map_2_camera_init_Trans.child_frame_id = "camera_init";
+
+==================================================
+
+
+geometry_msgs::TransformStamped camera_2_base_link_Trans;
+camera_2_base_link_Trans.header.frame_id = "camera";
+camera_2_base_link_Trans.child_frame_id = "base_link";
