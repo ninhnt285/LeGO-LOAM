@@ -70,15 +70,15 @@ public:
         subOdomAftMapped = nh.subscribe<nav_msgs::Odometry>("/aft_mapped_to_init", 5, &TransformFusion::odomAftMappedHandler, this);
 
         laserOdometry2.header.frame_id = "camera_init";
-        laserOdometry2.child_frame_id = "camera";
+        laserOdometry2.child_frame_id = "vel_loam";
 
         laserOdometryTrans2.header.frame_id = "camera_init";
-        laserOdometryTrans2.child_frame_id = "camera";
+        laserOdometryTrans2.child_frame_id = "vel_loam";
 
         map_2_camera_init_Trans.header.frame_id = "map";
         map_2_camera_init_Trans.child_frame_id = "camera_init";
 
-        camera_2_base_link_Trans.header.frame_id = "camera";
+        camera_2_base_link_Trans.header.frame_id = "vel_loam";
         camera_2_base_link_Trans.child_frame_id = "base_link";
 
         for (int i = 0; i < 6; ++i)
