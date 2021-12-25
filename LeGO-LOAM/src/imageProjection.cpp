@@ -76,11 +76,11 @@ private:
 
     std::vector<std::pair<int8_t, int8_t> > neighborIterator; // neighbor iterator for segmentaiton process
 
-    uint16_t *allPushedIndX; // array for tracking points of a segmented object
-    uint16_t *allPushedIndY;
+		std::vector<uint16_t> allPushedIndX; // array for tracking points of a segmented object
+    std::vector<uint16_t> allPushedIndY;
 
-    uint16_t *queueIndX; // array for breadth-first search process of segmentation, for speed
-    uint16_t *queueIndY;
+		std::vector<uint16_t> queueIndX; // array for breadth-first search process of segmentation, for speed
+    std::vector<uint16_t> queueIndY;
 
 public:
     ImageProjection():
@@ -135,11 +135,11 @@ public:
         neighbor.first =  0; neighbor.second = -1; neighborIterator.push_back(neighbor);
         neighbor.first =  1; neighbor.second =  0; neighborIterator.push_back(neighbor);
 
-        allPushedIndX = new uint16_t[N_SCAN*Horizon_SCAN];
-        allPushedIndY = new uint16_t[N_SCAN*Horizon_SCAN];
+        allPushedIndX.resize(N_SCAN*Horizon_SCAN);
+        allPushedIndY.resize(N_SCAN*Horizon_SCAN);
 
-        queueIndX = new uint16_t[N_SCAN*Horizon_SCAN];
-        queueIndY = new uint16_t[N_SCAN*Horizon_SCAN];
+        queueIndX.resize(N_SCAN*Horizon_SCAN);
+        queueIndY.resize(N_SCAN*Horizon_SCAN);
     }
 
     void resetParameters(){
@@ -395,8 +395,8 @@ public:
             // Loop through all the neighboring grids of popped grid
             for (auto iter = neighborIterator.begin(); iter != neighborIterator.end(); ++iter){
                 // new index
-                thisIndX = fromIndX + (*iter).first;
-                thisIndY = fromIndY + (*iter).second;
+                thisIndX = fromIndX + iter->first;
+                thisIndY = fromIndY + iter->second;
                 // index should be within the boundary
                 if (thisIndX < 0 || thisIndX >= N_SCAN)
                     continue;
@@ -414,7 +414,7 @@ public:
                 d2 = std::min(rangeMat.at<float>(fromIndX, fromIndY), 
                               rangeMat.at<float>(thisIndX, thisIndY));
 
-                if ((*iter).first == 0)
+                if (iter->first == 0)
                     alpha = segmentAlphaX;
                 else
                     alpha = segmentAlphaY;

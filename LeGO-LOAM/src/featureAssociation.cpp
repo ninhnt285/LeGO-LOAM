@@ -206,18 +206,18 @@ class FeatureAssociation{
 		void initializationValue()
 		{
 			size_t nscan_size = N_SCAN * Horizon_SCAN;
-			cloudCurvature.reserve(nscan_size);
-			cloudNeighborPicked.reserve(nscan_size);
-			cloudLabel.reserve(nscan_size);
+			cloudCurvature.resize(nscan_size);
+			cloudNeighborPicked.resize(nscan_size);
+			cloudLabel.resize(nscan_size);
 
-			pointSelCornerInd.reserve(nscan_size);
-			pointSearchCornerInd1.reserve(nscan_size);
-			pointSearchCornerInd2.reserve(nscan_size);
+			pointSelCornerInd.resize(nscan_size);
+			pointSearchCornerInd1.resize(nscan_size);
+			pointSearchCornerInd2.resize(nscan_size);
 
-			pointSelSurfInd.reserve(nscan_size);
-			pointSearchSurfInd1.reserve(nscan_size);
-			pointSearchSurfInd2.reserve(nscan_size);
-			pointSearchSurfInd3.reserve(nscan_size);
+			pointSelSurfInd.resize(nscan_size);
+			pointSearchSurfInd1.resize(nscan_size);
+			pointSearchSurfInd2.resize(nscan_size);
+			pointSearchSurfInd3.resize(nscan_size);
 
 			cloudSmoothness.resize(N_SCAN*Horizon_SCAN);
 

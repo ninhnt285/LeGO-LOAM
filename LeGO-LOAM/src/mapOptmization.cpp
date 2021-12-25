@@ -53,7 +53,7 @@ class mapOptimization{
 		NonlinearFactorGraph gtSAMgraph;
 		Values initialEstimate;
 		Values optimizedEstimate;
-		ISAM2 *isam;
+		std::unique_ptr <ISAM2> isam;
 		Values isamCurrentEstimate;
 
 		noiseModel::Diagonal::shared_ptr priorNoise;
@@ -227,7 +227,7 @@ class mapOptimization{
 		ISAM2Params parameters;
 		parameters.relinearizeThreshold = 0.01;
 		parameters.relinearizeSkip = 1;
-		isam = new ISAM2(parameters);
+		isam = std::make_unique<ISAM2>(parameters);
 
 		pubKeyPoses = nh.advertise<sensor_msgs::PointCloud2>("/key_pose_origin", 2);
 		pubLaserCloudSurround = nh.advertise<sensor_msgs::PointCloud2>("/laser_cloud_surround", 2);
@@ -738,8 +738,10 @@ class mapOptimization{
 			}
 			// save final point cloud
 			ROS_INFO("Saving point cloud");
+			std::cout << "saving point cloud\n";
 			pcl::io::savePCDFileASCII(fileDirectory+"finalCloud.pcd", *globalMapKeyFramesDS);
 			ROS_INFO("Final point cloud saved");
+			std::cout << "saved point cloud\n";
 
 			string cornerMapString = "/tmp/cornerMap.pcd";
 			string surfaceMapString = "/tmp/surfaceMap.pcd";

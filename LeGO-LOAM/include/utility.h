@@ -49,8 +49,6 @@
 #include <thread>
 #include <mutex>
 
-#define PI 3.14159265
-
 using namespace std;
 
 typedef pcl::PointXYZI  PointType;
