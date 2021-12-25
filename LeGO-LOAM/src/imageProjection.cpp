@@ -211,7 +211,8 @@ public:
     void projectPointCloud(){
         // range image projection
         float verticalAngle, horizonAngle, range;
-        size_t rowIdn, columnIdn, index, cloudSize; 
+        int rowIdn, columnIdn, index;
+				size_t cloudSize; 
         PointType thisPoint;
 
         cloudSize = laserCloudIn->points.size();
@@ -381,7 +382,7 @@ public:
 
         allPushedIndX[0] = row;
         allPushedIndY[0] = col;
-        int allPushedIndSize = 1;
+        size_t allPushedIndSize = 1;
         
         while(queueSize > 0){
             // Pop point

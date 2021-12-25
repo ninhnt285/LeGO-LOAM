@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(lego_loam)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -O3")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic -std=c++17")
 
 set(VTK_DIR "$ENV{HOME}/.local/")
 find_package(VTK REQUIRED)
 include_directories(${VTK_INCLUDE_DIRS}) 
 find_package(catkin REQUIRED COMPONENTS
-  tf
+  tf2
+  tf2_ros
   roscpp
   rospy
   cv_bridge

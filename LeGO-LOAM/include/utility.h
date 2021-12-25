@@ -23,8 +23,13 @@
 #include <pcl/common/common.h>
 #include <pcl/registration/icp.h>
 
-#include <tf/transform_broadcaster.h>
-#include <tf/transform_datatypes.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2/LinearMath/Transform.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/transform_datatypes.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <geometry_msgs/Quaternion.h>
  
 #include <vector>
 #include <cmath>
