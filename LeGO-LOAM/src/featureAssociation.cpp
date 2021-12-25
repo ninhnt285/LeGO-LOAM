@@ -1840,7 +1840,7 @@ int main(int argc, char** argv)
 
 	FeatureAssociation FA;
 
-	ros::Rate rate(200);
+	ros::Rate rate(30);
 	while (ros::ok())
 	{
 		ros::spinOnce();

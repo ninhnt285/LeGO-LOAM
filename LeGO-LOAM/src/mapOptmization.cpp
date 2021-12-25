@@ -45,7 +45,6 @@
 #include <gtsam/nonlinear/ISAM2.h>
 
 using namespace gtsam;
-
 class mapOptimization{
 
 	private:
@@ -60,7 +59,7 @@ class mapOptimization{
 		noiseModel::Diagonal::shared_ptr odometryNoise;
 		noiseModel::Diagonal::shared_ptr constraintNoise;
 
-		ros::NodeHandle nh;
+		ros::NodeHandle& nh;
 
 		ros::Publisher pubLaserCloudSurround;
 		ros::Publisher pubOdomAftMapped;
@@ -221,9 +220,7 @@ class mapOptimization{
 
 
 
-		mapOptimization():
-			nh("~")
-	{
+		mapOptimization(ros::NodeHandle &nh_in): nh(nh_in) {
 		ISAM2Params parameters;
 		parameters.relinearizeThreshold = 0.01;
 		parameters.relinearizeSkip = 1;
@@ -731,44 +728,50 @@ class mapOptimization{
 		}
 
 		void visualizeGlobalMapThread(){
-			ros::Rate rate(0.2);
-			while (ros::ok()){
+			ros::Rate rate(1);
+			while (sigint_shutdown == false and ros::ok()){
 				rate.sleep();
 				publishGlobalMap();
 			}
-			// save final point cloud
-			ROS_INFO("Saving point cloud");
-			std::cout << "saving point cloud\n";
-			pcl::io::savePCDFileASCII(fileDirectory+"finalCloud.pcd", *globalMapKeyFramesDS);
-			ROS_INFO("Final point cloud saved");
-			std::cout << "saved point cloud\n";
+			if(mo_cleanup == false) {
+				// save final point cloud
+				ROS_INFO("Saving point cloud");
+				pcl::io::savePCDFileASCII(fileDirectory+"finalCloud.pcd", *globalMapKeyFramesDS);
+				globalMapKeyFramesDS->clear();     
+				ROS_INFO("Final point cloud saved");
 
-			string cornerMapString = "/tmp/cornerMap.pcd";
-			string surfaceMapString = "/tmp/surfaceMap.pcd";
-			string trajectoryString = "/tmp/trajectory.pcd";
+				string cornerMapString = "/tmp/cornerMap.pcd";
+				string surfaceMapString = "/tmp/surfaceMap.pcd";
+				string trajectoryString = "/tmp/trajectory.pcd";
 
-			pcl::PointCloud<PointType>::Ptr cornerMapCloud(new pcl::PointCloud<PointType>());
-			pcl::PointCloud<PointType>::Ptr cornerMapCloudDS(new pcl::PointCloud<PointType>());
-			pcl::PointCloud<PointType>::Ptr surfaceMapCloud(new pcl::PointCloud<PointType>());
-			pcl::PointCloud<PointType>::Ptr surfaceMapCloudDS(new pcl::PointCloud<PointType>());
+				pcl::PointCloud<PointType>::Ptr cornerMapCloud(new pcl::PointCloud<PointType>());
+				pcl::PointCloud<PointType>::Ptr cornerMapCloudDS(new pcl::PointCloud<PointType>());
+				pcl::PointCloud<PointType>::Ptr surfaceMapCloud(new pcl::PointCloud<PointType>());
+				pcl::PointCloud<PointType>::Ptr surfaceMapCloudDS(new pcl::PointCloud<PointType>());
 
-			for(size_t i = 0; i < cornerCloudKeyFrames.size(); i++) {
-				*cornerMapCloud  += *transformPointCloud(cornerCloudKeyFrames[i],   &cloudKeyPoses6D->points[i]);
-				*surfaceMapCloud += *transformPointCloud(surfCloudKeyFrames[i],     &cloudKeyPoses6D->points[i]);
-				*surfaceMapCloud += *transformPointCloud(outlierCloudKeyFrames[i],  &cloudKeyPoses6D->points[i]);
+				for(size_t i = 0; i < cornerCloudKeyFrames.size(); i++) {
+					*cornerMapCloud  += *transformPointCloud(cornerCloudKeyFrames[i],   &cloudKeyPoses6D->points[i]);
+					*surfaceMapCloud += *transformPointCloud(surfCloudKeyFrames[i],     &cloudKeyPoses6D->points[i]);
+					*surfaceMapCloud += *transformPointCloud(outlierCloudKeyFrames[i],  &cloudKeyPoses6D->points[i]);
+				}
+
+				downSizeFilterCorner.setInputCloud(cornerMapCloud);
+				downSizeFilterCorner.filter(*cornerMapCloudDS);
+				downSizeFilterSurf.setInputCloud(surfaceMapCloud);
+				downSizeFilterSurf.filter(*surfaceMapCloudDS);
+
+				pcl::io::savePCDFileASCII(fileDirectory+"cornerMap.pcd", *cornerMapCloudDS);
+				ROS_INFO("Corner map saved");
+				pcl::io::savePCDFileASCII(fileDirectory+"surfaceMap.pcd", *surfaceMapCloudDS);
+				ROS_INFO("Surface map saved");
+				pcl::io::savePCDFileASCII(fileDirectory+"trajectory.pcd", *cloudKeyPoses3D);
+				ROS_INFO("Trajectory saved");
+				cornerMapCloud->clear();
+				cornerMapCloudDS->clear();
+				surfaceMapCloud->clear();
+				surfaceMapCloudDS->clear();
+				mo_cleanup = true; 
 			}
-
-			downSizeFilterCorner.setInputCloud(cornerMapCloud);
-			downSizeFilterCorner.filter(*cornerMapCloudDS);
-			downSizeFilterSurf.setInputCloud(surfaceMapCloud);
-			downSizeFilterSurf.filter(*surfaceMapCloudDS);
-
-			pcl::io::savePCDFileASCII(fileDirectory+"cornerMap.pcd", *cornerMapCloudDS);
-			ROS_INFO("Corner map saved");
-			pcl::io::savePCDFileASCII(fileDirectory+"surfaceMap.pcd", *surfaceMapCloudDS);
-			ROS_INFO("Surface map saved");
-			pcl::io::savePCDFileASCII(fileDirectory+"trajectory.pcd", *cloudKeyPoses3D);
-			ROS_INFO("Trajectory saved");
 		}
 
 		void publishGlobalMap(){
@@ -1540,19 +1543,38 @@ class mapOptimization{
 		}
 };
 
+void mySigintHandler(int sig) {
+	sigint_shutdown = true;
+	ros::Time begin = ros::Time::now();
+	double secs = (ros::Time::now() - begin).toSec();
+	ros::Rate rate(5);
+	std::cout << "MO cleaning up\n";
+	while(secs < 10 and mo_cleanup == false) {
+		rate.sleep();
+		secs = (ros::Time::now() - begin).toSec();
+	}
+	if(mo_cleanup == true) {
+		std::cout << "MO cleanup successful\n";
+	} else {
+		std::cout << "MO cleanup unsuccessful\n";
+	}
+	ros::shutdown();
+}
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "lego_loam");
+	ros::init(argc, argv, "lego_loam", ros::init_options::NoSigintHandler);
+	ros::NodeHandle nh("~MO_lego_loam");
+	std::signal(SIGINT, mySigintHandler);
 
 	ROS_INFO("\033[1;32m---->\033[0m Map Optimization Started.");
 
-	mapOptimization MO;
+	mapOptimization MO(nh);
 
 	std::thread loopthread(&mapOptimization::loopClosureThread, &MO);
 	std::thread visualizeMapThread(&mapOptimization::visualizeGlobalMapThread, &MO);
 
-	ros::Rate rate(200);
+	ros::Rate rate(30);
 	while (ros::ok())
 	{
 		ros::spinOnce();

@@ -3,6 +3,7 @@
 
 
 #include <ros/ros.h>
+#include <csignal>
 
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -58,6 +59,9 @@ extern const string imuTopic = "/imu/data";
 
 // Save pcd
 extern const string fileDirectory = "/tmp/";
+
+extern bool sigint_shutdown = false;
+extern bool mo_cleanup = false;
 
 // Using velodyne cloud "ring" channel for image projection (other lidar may have different name for this channel, change "PointXYZIR" below)
 extern const bool useCloudRing = true; // if true, ang_res_y and ang_bottom are not used
