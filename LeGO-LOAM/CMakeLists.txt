@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(lego_loam)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++17 -O3")
 
 set(VTK_DIR "$ENV{HOME}/.local/")
 find_package(VTK REQUIRED)
