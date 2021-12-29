@@ -733,12 +733,16 @@ class mapOptimization{
 				rate.sleep();
 				publishGlobalMap();
 			}
+		}
+		void MO_cleanup() {
 			if(mo_cleanup == false) {
 				// save final point cloud
 				ROS_INFO("Saving point cloud");
+				std::cout << "saving point cloud\n";
 				pcl::io::savePCDFileASCII(fileDirectory+"finalCloud.pcd", *globalMapKeyFramesDS);
 				globalMapKeyFramesDS->clear();     
 				ROS_INFO("Final point cloud saved");
+				std::cout << "saved point cloud\n";
 
 				string cornerMapString = "/tmp/cornerMap.pcd";
 				string surfaceMapString = "/tmp/surfaceMap.pcd";
@@ -1584,6 +1588,7 @@ int main(int argc, char** argv)
 		rate.sleep();
 	}
 
+	MO.MO_cleanup();
 	loopthread.join();
 	visualizeMapThread.join();
 

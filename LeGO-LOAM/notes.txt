@@ -1,4 +1,6 @@
 
+    <node pkg="lego_loam" type="mapOptmization"     name="mapOptmization"     output="screen" launch-prefix="gdb -ex run --args"/>
+
 tf2_ros::TransformBroadcaster tfBroadcaster;
 tfBroadcaster.sendTransform(aftMappedTrans);
 

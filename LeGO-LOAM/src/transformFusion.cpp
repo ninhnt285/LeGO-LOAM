@@ -47,11 +47,11 @@ private:
 		geometry_msgs::TransformStamped laserOdometryTrans2;
     tf2_ros::TransformBroadcaster tfBroadcaster2;
 
-		geometry_msgs::TransformStamped map_2_camera_init_Trans;
-    tf2_ros::TransformBroadcaster tfBroadcasterMap2CameraInit;
+		/* geometry_msgs::TransformStamped map_2_camera_init_Trans; */
+    /* tf2_ros::TransformBroadcaster tfBroadcasterMap2CameraInit; */
 
-		geometry_msgs::TransformStamped camera_2_base_link_Trans;
-    tf2_ros::TransformBroadcaster tfBroadcasterCamera2Baselink;
+		/* geometry_msgs::TransformStamped camera_2_base_link_Trans; */
+    /* tf2_ros::TransformBroadcaster tfBroadcasterCamera2Baselink; */
 
     float transformSum[6];
     float transformIncre[6];
@@ -75,11 +75,11 @@ public:
         laserOdometryTrans2.header.frame_id = "camera_init";
         laserOdometryTrans2.child_frame_id = "vel_loam";
 
-        map_2_camera_init_Trans.header.frame_id = "map";
-        map_2_camera_init_Trans.child_frame_id = "camera_init";
+        /* map_2_camera_init_Trans.header.frame_id = "map"; */
+        /* map_2_camera_init_Trans.child_frame_id = "camera_init"; */
 
-        camera_2_base_link_Trans.header.frame_id = "vel_loam";
-        camera_2_base_link_Trans.child_frame_id = "base_link";
+        /* camera_2_base_link_Trans.header.frame_id = "vel_loam"; */
+        /* camera_2_base_link_Trans.child_frame_id = "base_link"; */
 
         for (int i = 0; i < 6; ++i)
         {
