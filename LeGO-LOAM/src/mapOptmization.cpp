@@ -1567,9 +1567,8 @@ void mySigintHandler(int sig) {
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "lego_loam", ros::init_options::NoSigintHandler);
+	ros::init(argc, argv, "lego_loam");
 	ros::NodeHandle nh("~MO_lego_loam");
-	std::signal(SIGINT, mySigintHandler);
 
 	ROS_INFO("\033[1;32m---->\033[0m Map Optimization Started.");
 
