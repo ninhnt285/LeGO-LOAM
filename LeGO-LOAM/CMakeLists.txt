@@ -27,6 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(GTSAM REQUIRED QUIET)
 find_package(PCL REQUIRED QUIET)
 find_package(OpenCV REQUIRED QUIET)
+find_package(Boost REQUIRED COMPONENTS timer thread serialization chrono)
 
 catkin_package(
   INCLUDE_DIRS include
