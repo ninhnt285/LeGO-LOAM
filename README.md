@@ -31,7 +31,7 @@ You can use the following commands to download and compile the package.
 
 ```
 cd ~/catkin_ws/src
-git clone https://github.com/RobustFieldAutonomyLab/LeGO-LOAM.git
+git clone https://github.com/ninhnt285/LeGO-LOAM.git
 cd ..
 catkin_make -j1
 ```
