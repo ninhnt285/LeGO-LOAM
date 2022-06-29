@@ -10,7 +10,8 @@ Panels:
   - Class: rviz/Selection
     Name: Selection
   - Class: rviz/Tool Properties
-    Expanded: ~
+    Expanded:
+      - /2D Pose Estimate1
     Name: Tool Properties
     Splitter Ratio: 0.588679016
   - Class: rviz/Views
@@ -508,6 +509,32 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: false
+    - Alpha: 0.5
+      Cell Size: 10
+      Class: rviz/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: map_marker
+      Name: Map Marker
+      Namespaces:
+        {}
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -520,6 +547,8 @@ Visualization Manager:
       Hide Inactive Objects: true
     - Class: rviz/FocusCamera
     - Class: rviz/Measure
+    - Class: rviz/SetInitialPose
+      Topic: /set_position
   Value: true
   Views:
     Current:

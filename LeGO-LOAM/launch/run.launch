@@ -13,10 +13,11 @@
 
     <!--- TF -->
     <node pkg="tf2_ros" type="static_transform_publisher" name="map_tf"  args="0 0 0 0 0 0 map    odom" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 1.570759 0 1.570759 map camera_init" />
+    <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_camera"  args="0 0 0 -1.570759 -1.570759 0 camera_init base_loam" />
+    
 
-    <node pkg="tf2_ros" type="static_transform_publisher" name="camera_init_to_map"  args="-0.291 0.010 0.897 1.570759 0 1.570759 map camera_init" />
-
-    <node pkg="tf2_ros" type="static_transform_publisher" name="loam_base_tf"  args="-0.010 -0.897 0.291 0 -1.570759 -1.570759 vel_loam base_loam" />
+    <!-- <node pkg="tf2_ros" type="static_transform_publisher" name="loam_base_tf"  args="-0.010 -0.897 0.291 0 -1.570759 -1.570759 vel_loam base_loam" /> -->
 		<!---
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera" args="-0.291 0.010 0.897 1.570759 0 1.570759 base_link vel_loam 10" />
 		<node pkg="tf" type="static_transform_publisher" name="camera_init_to_map"  args="0 0 0 1.570795   0        1.570795 /map    /camera_init 10" />
