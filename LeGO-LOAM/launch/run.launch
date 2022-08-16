@@ -9,6 +9,8 @@
 
     <node pkg="tf2_ros" type="static_transform_publisher" name="base_link_to_base_loam" args="0 0 0 0 0 0 base_loam base_link" />
 		-->
+    <arg name="show_rviz" default="false" />
+
     <param name="/use_sim_time" value="false" />
 
     <!--- TF -->
@@ -24,7 +26,9 @@
     <node pkg="tf" type="static_transform_publisher" name="base_link_to_camera" args="0 0 0 -1.570795 -1.570795 0        /camera /base_link   10" />
 		-->
     <!--- Run Rviz-->
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find lego_loam)/launch/husky-line-coverage.rviz" />
+    <group if="$(arg show_rviz)">
+      <node pkg="rviz" type="rviz" name="rviz" args="-d $(find lego_loam)/launch/husky-line-coverage.rviz" />
+    </group>
 
     <!--- LeGO-LOAM -->    
     <node pkg="lego_loam" type="imageProjection"    name="imageProjection"    output="screen"/>
